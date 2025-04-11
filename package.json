@@ -1,0 +1,23 @@
+{
+  "name": "expense-tracker-api",
+  "version": "1.0.0",
+  "description": "A RESTful API for managing personal expenses and income, built with Node.js and Express",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "start:prod": "cross-env NODE_ENV=production node app.js",
+    "dev": "nodemon app.js",
+    "dev:prod": "cross-env NODE_ENV=production nodemon app.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.24.0",
+    "globals": "^16.0.0",
+    "nodemon": "^3.1.9"
+  }
+}
