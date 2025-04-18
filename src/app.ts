@@ -3,8 +3,12 @@ import express, { Express } from 'express';
 import { PORT, NODE_ENV } from './config/env';
 import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
+import { responseMiddleware } from './middleware/responseMiddleware';
 
 const app: Express = express();
+
+app.use(express.json());
+app.use(responseMiddleware);
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
