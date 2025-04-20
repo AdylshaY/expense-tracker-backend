@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import helmet from 'helmet';
 
 import { PORT, NODE_ENV } from './config/env';
 import authRouter from './routes/auth.routes';
@@ -11,6 +12,7 @@ import { defaultRateLimiter } from './middleware/rateLimitMiddleware';
 
 const app: Express = express();
 
+app.use(helmet());
 app.use(express.json());
 app.use(responseMiddleware);
 app.use(defaultRateLimiter);
