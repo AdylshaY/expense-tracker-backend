@@ -1,13 +1,26 @@
 import { prisma } from '../lib/prisma';
 import { User } from '@prisma/client';
+import { UserViewModel } from '../types/user.types';
 
 class UserService {
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserViewModel[]> {
     const users = await prisma.user.findMany();
-    return users;
+
+    const userData: UserViewModel[] = users.map((user) => {
+      return {
+        ID: user.ID,
+        EMAIL: user.EMAIL,
+        FIRST_NAME: user.FIRST_NAME,
+        LAST_NAME: user.LAST_NAME,
+        CREATED_AT: user.CREATED_AT,
+        UPDATED_AT: user.UPDATED_AT,
+      };
+    });
+
+    return userData;
   }
 
-  async getUser(id: number): Promise<User> {
+  async getUser(id: number): Promise<UserViewModel> {
     const user = await prisma.user.findUnique({
       where: { ID: id },
     });
@@ -16,7 +29,16 @@ class UserService {
       throw new Error('User not found');
     }
 
-    return user;
+    const userData: UserViewModel = {
+      ID: user.ID,
+      EMAIL: user.EMAIL,
+      FIRST_NAME: user.FIRST_NAME,
+      LAST_NAME: user.LAST_NAME,
+      CREATED_AT: user.CREATED_AT,
+      UPDATED_AT: user.UPDATED_AT,
+    };
+
+    return userData;
   }
 
   async updateUser(id: number, user: User): Promise<User> {
