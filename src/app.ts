@@ -5,6 +5,7 @@ import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
 import categoryRouter from './routes/category.routes';
 import budgetRouter from './routes/budget.routes';
+import transactionRouter from './routes/transaction.routes';
 import { responseMiddleware } from './middleware/responseMiddleware';
 
 const app: Express = express();
@@ -16,6 +17,7 @@ app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/categories', categoryRouter);
 app.use('/budgets', budgetRouter);
+app.use('/transactions', transactionRouter);
 
 app.listen(PORT, () => {
   console.log(

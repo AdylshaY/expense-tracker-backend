@@ -35,6 +35,8 @@ model Category {
 
   USER_ID Int
   USER    User @relation(fields: [USER_ID], references: [ID])
+
+  TRANSACTIONS Transaction[]
 }
 
 model Budget {
@@ -61,6 +63,9 @@ model Transaction {
   CREATED_AT  DateTime @default(now())
   UPDATED_AT  DateTime @updatedAt
 
+  CATEGORY_ID Int?
+  CATEGORY    Category? @relation(fields: [CATEGORY_ID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+
   BUDGET_ID Int
-  BUDGET    Budget @relation(fields: [BUDGET_ID], references: [ID])
+  BUDGET    Budget @relation(fields: [BUDGET_ID], references: [ID], onDelete: Cascade, onUpdate: Cascade)
 }
