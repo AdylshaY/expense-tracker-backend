@@ -24,6 +24,7 @@ model User {
   UPDATED_AT DateTime @updatedAt
 
   CATEGORIES Category[]
+  BUDGETS    Budget[]
 }
 
 model Category {
@@ -34,4 +35,32 @@ model Category {
 
   USER_ID Int
   USER    User @relation(fields: [USER_ID], references: [ID])
+}
+
+model Budget {
+  ID          Int      @id @default(autoincrement())
+  NAME        String
+  DESCRIPTION String?
+  BALANCE     Float
+  CREATED_AT  DateTime @default(now())
+  UPDATED_AT  DateTime @updatedAt
+
+  USER_ID Int
+  USER    User @relation(fields: [USER_ID], references: [ID])
+
+  TRANSACTIONS Transaction[]
+}
+
+model Transaction {
+  ID          Int      @id @default(autoincrement())
+  NAME        String
+  DESCRIPTION String?
+  AMOUNT      Float
+  TYPE        String
+  DATE        DateTime
+  CREATED_AT  DateTime @default(now())
+  UPDATED_AT  DateTime @updatedAt
+
+  BUDGET_ID Int
+  BUDGET    Budget @relation(fields: [BUDGET_ID], references: [ID])
 }
