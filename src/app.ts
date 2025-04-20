@@ -7,11 +7,13 @@ import categoryRouter from './routes/category.routes';
 import budgetRouter from './routes/budget.routes';
 import transactionRouter from './routes/transaction.routes';
 import { responseMiddleware } from './middleware/responseMiddleware';
+import { defaultRateLimiter } from './middleware/rateLimitMiddleware';
 
 const app: Express = express();
 
 app.use(express.json());
 app.use(responseMiddleware);
+app.use(defaultRateLimiter);
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
