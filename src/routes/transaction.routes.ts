@@ -45,7 +45,16 @@ transactionRouter.get('/:id', async (req: Request, res: Response) => {
 
 transactionRouter.post('/', async (req: Request, res: Response) => {
   try {
-    const transaction = await transactionService.createTransaction(req.body);
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+
+    const transaction = await transactionService.createTransaction(
+      req.body,
+      parseInt(userId)
+    );
 
     res.success('Transaction created successfully', transaction, 201);
   } catch (error: any) {

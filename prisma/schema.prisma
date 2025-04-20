@@ -34,7 +34,7 @@ model Category {
   UPDATED_AT DateTime @updatedAt
 
   USER_ID Int
-  USER    User @relation(fields: [USER_ID], references: [ID])
+  USER    User @relation(fields: [USER_ID], references: [ID], onDelete: Cascade, onUpdate: Cascade)
 
   TRANSACTIONS Transaction[]
 }
@@ -48,7 +48,7 @@ model Budget {
   UPDATED_AT  DateTime @updatedAt
 
   USER_ID Int
-  USER    User @relation(fields: [USER_ID], references: [ID])
+  USER    User @relation(fields: [USER_ID], references: [ID], onDelete: Cascade, onUpdate: Cascade)
 
   TRANSACTIONS Transaction[]
 }

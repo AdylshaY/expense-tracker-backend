@@ -25,18 +25,16 @@ export const authenticate = (
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      return res.status(401).json({
-        success: false,
-        message: 'Authorization header is missing',
-      });
+      return res.error('Authorization header is missing', undefined, 401);
     }
 
     const parts = authHeader.split(' ');
     if (parts.length !== 2 || parts[0] !== 'Bearer') {
-      return res.status(401).json({
-        success: false,
-        message: 'Authorization header format must be "Bearer {token}"',
-      });
+      return res.error(
+        'Authorization header format must be "Bearer {token}"',
+        undefined,
+        401
+      );
     }
 
     const token = parts[1];
@@ -51,15 +49,13 @@ export const authenticate = (
     next();
   } catch (error) {
     if (error instanceof Error) {
-      return res.status(401).json({
-        success: false,
-        message: error.message,
-      });
+      return res.error(error.message, undefined, 500);
     }
 
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error during authentication',
-    });
+    return res.error(
+      'Internal server error during authentication',
+      undefined,
+      500
+    );
   }
 };

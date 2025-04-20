@@ -56,7 +56,15 @@ class TransactionService {
     };
   }
 
-  async createTransaction(transaction: TransactionViewModel) {
+  async createTransaction(transaction: TransactionViewModel, userId: number) {
+    const budget = await prisma.budget.findUnique({
+      where: { ID: transaction.budgetId, USER_ID: userId },
+    });
+
+    if (!budget) {
+      throw new Error('Budget not found');
+    }
+
     const createdTransaction = await prisma.transaction.create({
       data: {
         NAME: transaction.name,
@@ -64,7 +72,7 @@ class TransactionService {
         AMOUNT: transaction.amount,
         TYPE: transaction.type,
         DATE: transaction.date,
-        BUDGET_ID: transaction.budgetId,
+        BUDGET_ID: budget.ID,
         CATEGORY_ID: transaction.categoryId ?? null,
       },
     });
