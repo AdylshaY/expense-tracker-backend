@@ -3,6 +3,7 @@ import {
   AuthResponse,
   UserCredentials,
   UserRegistration,
+  UserWithToken
 } from '../types/auth.types';
 import bcrypt from 'bcryptjs';
 import { generateTokens } from '../utils/jwt.utils';
@@ -35,11 +36,21 @@ class AuthService {
         email: user.EMAIL,
       });
 
+      const responseData: UserWithToken = {
+        user: {
+          id: user.ID,
+          email: user.EMAIL,
+          firstName: user.FIRST_NAME,
+          lastName: user.LAST_NAME
+        },
+        token: tokens.accessToken
+      };
+
       return {
         success: true,
         message: 'Sign Up successful',
-        data: user,
-        token: tokens.accessToken,
+        data: responseData,
+        statusCode: 201
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -74,10 +85,21 @@ class AuthService {
         email: user.EMAIL,
       });
 
+      const responseData: UserWithToken = {
+        user: {
+          id: user.ID,
+          email: user.EMAIL,
+          firstName: user.FIRST_NAME,
+          lastName: user.LAST_NAME
+        },
+        token: tokens.accessToken
+      };
+
       return {
         success: true,
         message: 'Sign In successful',
-        token: tokens.accessToken,
+        data: responseData,
+        statusCode: 200
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -98,6 +120,7 @@ class AuthService {
       return {
         success: true,
         message: 'Sign Out successful',
+        statusCode: 200
       };
     } catch (error) {
       if (error instanceof Error) {

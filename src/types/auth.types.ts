@@ -2,8 +2,13 @@ export interface AuthResponse {
   success: boolean;
   message: string;
   data?: object;
-  token?: string;
-  error?: string;
+  error?: string | Record<string, unknown>;
+  statusCode?: number;
+}
+
+export interface UserWithToken {
+  user?: object;
+  token: string;
 }
 
 export interface UserCredentials {

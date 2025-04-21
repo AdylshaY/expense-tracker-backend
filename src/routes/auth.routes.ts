@@ -7,25 +7,18 @@ const authRouter = Router();
 authRouter.post('/sign-up', async (req: Request, res: Response) => {
   try {
     const response = await authService.signUp(req.body);
-    res.success(response.message, response.data, 201);
+    res.success(response.message, response.data, response.statusCode || 201);
   } catch (error: any) {
-    res.error(error.message);
+    res.error(error.message, error, 400);
   }
 });
 
 authRouter.post('/sign-in', async (req: Request, res: Response) => {
   try {
     const response = await authService.signIn(req.body);
-    res.success(
-      response.message,
-      {
-        ...response.data,
-        token: response.token,
-      },
-      200
-    );
+    res.success(response.message, response.data, response.statusCode || 200);
   } catch (error: any) {
-    res.error(error.message);
+    res.error(error.message, error, 400);
   }
 });
 
@@ -36,9 +29,9 @@ authRouter.post(
     try {
       const userId = req.user?.userId || '';
       const response = await authService.signOut(userId);
-      res.success(response.message, response.data, 200);
+      res.success(response.message, response.data, response.statusCode || 200);
     } catch (error: any) {
-      res.error(error.message);
+      res.error(error.message, error, 400);
     }
   }
 );
