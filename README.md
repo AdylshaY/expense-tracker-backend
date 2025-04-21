@@ -5,8 +5,10 @@ A RESTful API for managing personal expenses and income, built with Node.js, Exp
 ## Features
 
 - User authentication (register, login)
-- User management
+- User profile management
 - Category management for expenses/income
+- Budget creation and tracking
+- Transaction management with categorization
 - Secure API with JWT authentication
 - Database persistence with Prisma ORM
 
@@ -15,6 +17,7 @@ A RESTful API for managing personal expenses and income, built with Node.js, Exp
 - **Backend:** Node.js, Express
 - **Database:** SQL Server with Prisma ORM
 - **Authentication:** JWT, bcryptjs
+- **Security:** Helmet, Express Rate Limiter
 - **Language:** TypeScript
 
 ## Prerequisites
@@ -62,12 +65,36 @@ npm run start:prod
 ## API Endpoints
 
 ### Authentication
-- `POST /auth/register` - Register a new user
-- `POST /auth/login` - Login to get access token
+- `POST /auth/sign-up` - Register a new user
+- `POST /auth/sign-in` - Login to get access token
+- `POST /auth/sign-out` - Logout user (requires authentication)
 
 ### Users
-- `GET /users/profile` - Get user profile
-- `PUT /users/profile` - Update user profile
+- `GET /users` - Get all users (requires authentication)
+- `GET /users/:id` - Get user by ID (requires authentication)
+- `PUT /users/:id` - Update user (requires authentication)
+- `DELETE /users/:id` - Delete user (requires authentication)
+
+### Categories
+- `GET /categories` - Get all categories for current user (requires authentication)
+- `GET /categories/:id` - Get a specific category (requires authentication)
+- `POST /categories` - Create a new category (requires authentication)
+- `PUT /categories/:id` - Update a category (requires authentication)
+- `DELETE /categories/:id` - Delete a category (requires authentication)
+
+### Budgets
+- `GET /budgets` - Get all budgets for current user (requires authentication)
+- `GET /budgets/:id` - Get a specific budget (requires authentication)
+- `POST /budgets` - Create a new budget (requires authentication)
+- `PUT /budgets/:id` - Update a budget (requires authentication)
+- `DELETE /budgets/:id` - Delete a budget (requires authentication)
+
+### Transactions
+- `GET /transactions` - Get all transactions for current user (requires authentication)
+- `GET /transactions/:id` - Get a specific transaction (requires authentication)
+- `POST /transactions` - Create a new transaction (requires authentication)
+- `PUT /transactions/:id` - Update a transaction (requires authentication)
+- `DELETE /transactions/:id` - Delete a transaction (requires authentication)
 
 ## Project Structure
 
@@ -75,14 +102,22 @@ npm run start:prod
 expense-tracker-api/
 ├── src/
 │   ├── config/       # Configuration files
+│   ├── lib/          # Library files
 │   ├── middleware/   # Express middleware
 │   ├── routes/       # API routes
+│   │   ├── auth.routes.ts
+│   │   ├── user.routes.ts
+│   │   ├── category.routes.ts
+│   │   ├── budget.routes.ts
+│   │   └── transaction.routes.ts
 │   ├── services/     # Business logic
 │   ├── types/        # TypeScript types
 │   ├── utils/        # Utility functions
 │   └── app.ts        # Main application file
 ├── prisma/
-│   └── schema.prisma # Database schema
+│   └── schema.prisma # Database schema with User, Category, Budget and Transaction models
 ├── .env.example      # Example environment variables
+├── .env.development.local # Development environment variables
+├── .env.production.local  # Production environment variables
 └── package.json      # Project dependencies
 ```
