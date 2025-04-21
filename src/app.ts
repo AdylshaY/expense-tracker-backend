@@ -9,6 +9,8 @@ import budgetRouter from './routes/budget.routes';
 import transactionRouter from './routes/transaction.routes';
 import { responseMiddleware } from './middleware/responseMiddleware';
 import { defaultRateLimiter } from './middleware/rateLimitMiddleware';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './config/swagger';
 
 const app: Express = express();
 
@@ -17,11 +19,17 @@ app.use(express.json());
 app.use(responseMiddleware);
 app.use(defaultRateLimiter);
 
-app.use('/auth', authRouter);
-app.use('/users', userRouter);
-app.use('/categories', categoryRouter);
-app.use('/budgets', budgetRouter);
-app.use('/transactions', transactionRouter);
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, { explorer: true })
+);
+
+app.use('/v1/auth', authRouter);
+app.use('/v1/users', userRouter);
+app.use('/v1/categories', categoryRouter);
+app.use('/v1/budgets', budgetRouter);
+app.use('/v1/transactions', transactionRouter);
 
 app.listen(PORT, () => {
   console.log(

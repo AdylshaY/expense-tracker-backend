@@ -11,6 +11,7 @@ A RESTful API for managing personal expenses and income, built with Node.js, Exp
 - Transaction management with categorization
 - Secure API with JWT authentication
 - Database persistence with Prisma ORM
+- API documentation with Swagger UI
 
 ## Tech Stack
 
@@ -18,6 +19,7 @@ A RESTful API for managing personal expenses and income, built with Node.js, Exp
 - **Database:** SQL Server with Prisma ORM
 - **Authentication:** JWT, bcryptjs
 - **Security:** Helmet, Express Rate Limiter
+- **Documentation:** Swagger/OpenAPI 3.1.0
 - **Language:** TypeScript
 
 ## Prerequisites
@@ -62,6 +64,20 @@ npm run build
 npm run start:prod
 ```
 
+## API Documentation
+
+The API is fully documented using Swagger/OpenAPI 3.1.0. After starting the application, you can access the interactive documentation at:
+
+```
+http://localhost:3000/api-docs
+```
+
+This interactive documentation provides:
+- Complete details of all API endpoints
+- Request and response schemas
+- The ability to test API endpoints directly from the browser
+- Authentication support for testing protected endpoints
+
 ## API Endpoints
 
 ### Authentication
@@ -102,6 +118,10 @@ npm run start:prod
 expense-tracker-api/
 ├── src/
 │   ├── config/       # Configuration files
+│   │   └── swagger.ts # Swagger configuration
+│   │   └── env.ts     # Env configuration 
+│   ├── docs/         # API documentation
+│   │   └── swagger.yaml # OpenAPI specification
 │   ├── lib/          # Library files
 │   ├── middleware/   # Express middleware
 │   ├── routes/       # API routes
