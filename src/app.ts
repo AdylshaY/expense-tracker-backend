@@ -11,6 +11,7 @@ import { responseMiddleware } from './middleware/responseMiddleware';
 import { defaultRateLimiter } from './middleware/rateLimitMiddleware';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './config/swagger';
+import { scheduleTokenCleanup } from './utils/cleanup';
 
 const app: Express = express();
 
@@ -30,6 +31,14 @@ app.use('/v1/users', userRouter);
 app.use('/v1/categories', categoryRouter);
 app.use('/v1/budgets', budgetRouter);
 app.use('/v1/transactions', transactionRouter);
+
+const cleanupInterval = scheduleTokenCleanup(60);
+
+process.on('SIGINT', () => {
+  console.log('Shutting down application...');
+  clearInterval(cleanupInterval);
+  process.exit(0);
+});
 
 app.listen(PORT, () => {
   console.log(

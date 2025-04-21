@@ -28,7 +28,13 @@ authRouter.post(
   async (req: Request, res: Response) => {
     try {
       const userId = req.user?.userId || '';
-      const response = await authService.signOut(userId);
+      const token = req.token;
+
+      if (!token) {
+        return res.error('Token is required', undefined, 400);
+      }
+
+      const response = await authService.signOut(userId, token);
       res.success(response.message, response.data, response.statusCode || 200);
     } catch (error: any) {
       res.error(error.message, error, 400);

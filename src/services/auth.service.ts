@@ -3,10 +3,11 @@ import {
   AuthResponse,
   UserCredentials,
   UserRegistration,
-  UserWithToken
+  UserWithToken,
 } from '../types/auth.types';
 import bcrypt from 'bcryptjs';
 import { generateTokens } from '../utils/jwt.utils';
+import { blacklistToken } from '../utils/token.utils';
 
 class AuthService {
   async signUp(userData: UserRegistration): Promise<AuthResponse> {
@@ -41,16 +42,16 @@ class AuthService {
           id: user.ID,
           email: user.EMAIL,
           firstName: user.FIRST_NAME,
-          lastName: user.LAST_NAME
+          lastName: user.LAST_NAME,
         },
-        token: tokens.accessToken
+        token: tokens.accessToken,
       };
 
       return {
         success: true,
         message: 'Sign Up successful',
         data: responseData,
-        statusCode: 201
+        statusCode: 201,
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -90,16 +91,16 @@ class AuthService {
           id: user.ID,
           email: user.EMAIL,
           firstName: user.FIRST_NAME,
-          lastName: user.LAST_NAME
+          lastName: user.LAST_NAME,
         },
-        token: tokens.accessToken
+        token: tokens.accessToken,
       };
 
       return {
         success: true,
         message: 'Sign In successful',
         data: responseData,
-        statusCode: 200
+        statusCode: 200,
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -110,17 +111,37 @@ class AuthService {
     }
   }
 
-  async signOut(userId: string): Promise<AuthResponse> {
+  async signOut(userId: string, token: string): Promise<AuthResponse> {
     try {
-      // In a real implementation, you might:
-      // 1. Add the token to a blacklist in Redis/DB
-      // 2. Clear user sessions
-      // 3. Update user's status in the database
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+
+      if (!token) {
+        throw new Error('Token is required');
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { ID: parseInt(userId) },
+      });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      await blacklistToken(token, parseInt(userId));
+
+      await prisma.user.update({
+        where: { ID: parseInt(userId) },
+        data: {
+          UPDATED_AT: new Date(),
+        },
+      });
 
       return {
         success: true,
         message: 'Sign Out successful',
-        statusCode: 200
+        statusCode: 200,
       };
     } catch (error) {
       if (error instanceof Error) {
