@@ -39,30 +39,12 @@ class AuthService {
         },
       });
 
-      const tokens = generateTokens({
-        userId: String(user.ID),
+      const responseData = {
+        id: user.ID,
         email: user.EMAIL,
+        firstName: user.FIRST_NAME,
+        lastName: user.LAST_NAME,
         role: user.ROLE,
-      });
-
-      const expiresIn = tokens.expiresIn;
-      await prisma.userToken.create({
-        data: {
-          TOKEN: tokens.accessToken,
-          USER_ID: user.ID,
-          EXPIRES_AT: new Date(Date.now() + expiresIn),
-        },
-      });
-
-      const responseData: UserWithToken = {
-        user: {
-          id: user.ID,
-          email: user.EMAIL,
-          firstName: user.FIRST_NAME,
-          lastName: user.LAST_NAME,
-          role: user.ROLE,
-        },
-        token: tokens.accessToken,
       };
 
       return {
