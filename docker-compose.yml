@@ -10,4 +10,20 @@ services:
       - PORT=3000
       - JWT_SECRET=your_jwt_secret_key
       - JWT_EXPIRES_IN=15m
-      - DATABASE_URL=sqlserver://host.docker.internal:1433;database=expense_tracker_prod;user=sa;password=Admin1234;trustServerCertificate=true
+      - DATABASE_URL=sqlserver://db:1433;database=expense_tracker_prod;user=sa;password=Strong_Password123;trustServerCertificate=true
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - '1434:1433'  # In host 1434, in container 1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Strong_Password123
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+volumes:
+  mssql_data:
