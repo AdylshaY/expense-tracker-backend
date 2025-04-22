@@ -24,18 +24,13 @@ class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(userData.password, salt);
 
-      let role: UserRole = USER_ROLES.USER;
-      if (userData.role && isValidRole(userData.role)) {
-        role = userData.role;
-      }
-
       const user = await prisma.user.create({
         data: {
           EMAIL: userData.email,
           PASSWORD: hashedPassword,
           FIRST_NAME: userData.firstName,
           LAST_NAME: userData.lastName,
-          ROLE: role,
+          ROLE: USER_ROLES.USER,
         },
       });
 
