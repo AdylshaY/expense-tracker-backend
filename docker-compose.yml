@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - JWT_SECRET=your_jwt_secret_key
+      - JWT_EXPIRES_IN=15m
+      - DATABASE_URL=sqlserver://host.docker.internal:1433;database=expense_tracker_prod;user=sa;password=Admin1234;trustServerCertificate=true
