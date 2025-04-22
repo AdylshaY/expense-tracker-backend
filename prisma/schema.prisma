@@ -26,7 +26,7 @@ model User {
 
   CATEGORIES Category[]
   BUDGETS    Budget[]
-  TOKENS     TokenBlacklist[]
+  TOKENS     UserToken[]
 }
 
 model Category {
@@ -72,7 +72,7 @@ model Transaction {
   BUDGET    Budget @relation(fields: [BUDGET_ID], references: [ID], onDelete: Cascade, onUpdate: Cascade)
 }
 
-model TokenBlacklist {
+model UserToken {
   ID         Int      @id @default(autoincrement())
   TOKEN      String   @unique
   CREATED_AT DateTime @default(now())

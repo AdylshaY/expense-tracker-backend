@@ -1,4 +1,4 @@
-import { cleanupBlacklistedTokens } from './token.utils';
+import { cleanupExpiredTokens } from './token.utils';
 
 /**
  * Scheduled function to clean up expired tokens
@@ -19,7 +19,7 @@ export const scheduleTokenCleanup = (intervalMinutes: number = 60): NodeJS.Timeo
  */
 const cleanupTokens = async (): Promise<void> => {
   try {
-    const deletedCount = await cleanupBlacklistedTokens();
+    const deletedCount = await cleanupExpiredTokens();
     if (deletedCount > 0) {
       console.log(`Token cleanup complete: removed ${deletedCount} expired tokens`);
     }

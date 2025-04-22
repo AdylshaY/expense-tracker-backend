@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/jwt.utils';
-import { isTokenBlacklisted } from '../utils/token.utils';
+import { isValidToken } from '../utils/token.utils';
 import { USER_ROLES, UserRole } from '../constants/roles';
 
 declare global {
@@ -18,7 +18,7 @@ declare global {
 
 /**
  * Authentication middleware
- * Verifies JWT token from the Authorization header and checks if token is blacklisted
+ * Verifies JWT token from the Authorization header and checks if token is valid and not expired
  */
 export const authenticate = async (
   req: Request,
@@ -43,10 +43,10 @@ export const authenticate = async (
 
     const token = parts[1];
 
-    const blacklisted = await isTokenBlacklisted(token);
+    const isValid = await isValidToken(token);
 
-    if (blacklisted) {
-      return res.error('Token has been invalidated', undefined, 401);
+    if (!isValid) {
+      return res.error('Invalid or expired token', undefined, 401);
     }
 
     const decoded = verifyAccessToken(token);

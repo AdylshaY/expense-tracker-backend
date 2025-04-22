@@ -1,58 +1,58 @@
 import { prisma } from '../lib/prisma';
 
 /**
- * Check if a token is blacklisted
+ * Check if a token is valid and not expired
  */
-export const isTokenBlacklisted = async (token: string): Promise<boolean> => {
+export const isValidToken = async (token: string): Promise<boolean> => {
   try {
-    const blacklistedToken = await prisma.tokenBlacklist.findUnique({
+    const userToken = await prisma.userToken.findUnique({
       where: { TOKEN: token },
     });
-    
-    return !!blacklistedToken;
+
+    if (!userToken) return false;
+
+    if (userToken.EXPIRES_AT < new Date()) {
+      return false;
+    }
+
+    return true;
   } catch (error) {
-    console.error('Error checking token blacklist:', error);
-    // If there's an error, we assume the token is not blacklisted
-    // to prevent blocking legitimate requests
+    console.error('Error checking token validity:', error);
     return false;
   }
 };
 
 /**
- * Add a token to the blacklist
+ * Remove user token (for sign out)
  */
-export const blacklistToken = async (token: string, userId: number, expiresIn: number = 86400000): Promise<void> => {
+export const removeUserToken = async (userId: number): Promise<void> => {
   try {
-    await prisma.tokenBlacklist.create({
-      data: {
-        TOKEN: token,
-        USER_ID: userId,
-        EXPIRES_AT: new Date(Date.now() + expiresIn), // Default: 24 hours from now
-      },
+    await prisma.userToken.deleteMany({
+      where: { USER_ID: userId },
     });
   } catch (error) {
-    console.error('Error blacklisting token:', error);
-    throw new Error('Failed to blacklist token');
+    console.error('Error removing user token:', error);
+    throw new Error('Failed to remove token');
   }
 };
 
 /**
- * Clean up expired tokens from the blacklist
+ * Clean up expired tokens
  * This can be run as a scheduled job
  */
-export const cleanupBlacklistedTokens = async (): Promise<number> => {
+export const cleanupExpiredTokens = async (): Promise<number> => {
   try {
-    const result = await prisma.tokenBlacklist.deleteMany({
+    const result = await prisma.userToken.deleteMany({
       where: {
         EXPIRES_AT: {
           lt: new Date(),
         },
       },
     });
-    
+
     return result.count;
   } catch (error) {
-    console.error('Error cleaning up token blacklist:', error);
+    console.error('Error cleaning up expired tokens:', error);
     return 0;
   }
-}; 
+};

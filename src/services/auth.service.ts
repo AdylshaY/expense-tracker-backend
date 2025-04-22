@@ -7,7 +7,7 @@ import {
 } from '../types/auth.types';
 import bcrypt from 'bcryptjs';
 import { generateTokens } from '../utils/jwt.utils';
-import { blacklistToken } from '../utils/token.utils';
+import { removeUserToken } from '../utils/token.utils';
 import { USER_ROLES, isValidRole, UserRole } from '../constants/roles';
 
 class AuthService {
@@ -44,6 +44,16 @@ class AuthService {
         userId: String(user.ID),
         email: user.EMAIL,
         role: user.ROLE,
+      });
+
+      // Create token in the database
+      const expiresIn = 86400000; // 24 hours in milliseconds
+      await prisma.userToken.create({
+        data: {
+          TOKEN: tokens.accessToken,
+          USER_ID: user.ID,
+          EXPIRES_AT: new Date(Date.now() + expiresIn),
+        },
       });
 
       const responseData: UserWithToken = {
@@ -91,11 +101,37 @@ class AuthService {
         throw new Error('Invalid password');
       }
 
-      const tokens = generateTokens({
-        userId: String(user.ID),
-        email: user.EMAIL,
-        role: user.ROLE,
+      const existingToken = await prisma.userToken.findFirst({
+        where: {
+          USER_ID: user.ID,
+          EXPIRES_AT: {
+            gt: new Date(),
+          },
+        },
       });
+
+      let tokenValue: string;
+
+      if (existingToken) {
+        tokenValue = existingToken.TOKEN;
+      } else {
+        const tokens = generateTokens({
+          userId: String(user.ID),
+          email: user.EMAIL,
+          role: user.ROLE,
+        });
+
+        tokenValue = tokens.accessToken;
+
+        const expiresIn = tokens.expiresIn;
+        await prisma.userToken.create({
+          data: {
+            TOKEN: tokenValue,
+            USER_ID: user.ID,
+            EXPIRES_AT: new Date(Date.now() + expiresIn),
+          },
+        });
+      }
 
       const responseData: UserWithToken = {
         user: {
@@ -105,7 +141,7 @@ class AuthService {
           lastName: user.LAST_NAME,
           role: user.ROLE,
         },
-        token: tokens.accessToken,
+        token: tokenValue,
       };
 
       return {
@@ -129,10 +165,6 @@ class AuthService {
         throw new Error('User ID is required');
       }
 
-      if (!token) {
-        throw new Error('Token is required');
-      }
-
       const user = await prisma.user.findUnique({
         where: { ID: parseInt(userId) },
       });
@@ -141,7 +173,7 @@ class AuthService {
         throw new Error('User not found');
       }
 
-      await blacklistToken(token, parseInt(userId));
+      await removeUserToken(parseInt(userId));
 
       await prisma.user.update({
         where: { ID: parseInt(userId) },
