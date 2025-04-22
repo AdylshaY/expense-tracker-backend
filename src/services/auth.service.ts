@@ -24,7 +24,6 @@ class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(userData.password, salt);
 
-      // Set default role to USER if not provided or invalid
       let role: UserRole = USER_ROLES.USER;
       if (userData.role && isValidRole(userData.role)) {
         role = userData.role;
@@ -46,8 +45,7 @@ class AuthService {
         role: user.ROLE,
       });
 
-      // Create token in the database
-      const expiresIn = 86400000; // 24 hours in milliseconds
+      const expiresIn = tokens.expiresIn;
       await prisma.userToken.create({
         data: {
           TOKEN: tokens.accessToken,
