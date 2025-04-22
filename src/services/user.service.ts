@@ -3,6 +3,20 @@ import { User } from '@prisma/client';
 import { UserViewModel } from '../types/user.types';
 
 class UserService {
+  async getAllUsers(): Promise<UserViewModel[]> {
+    const users = await prisma.user.findMany();
+
+    return users.map((user) => ({
+      ID: user.ID,
+      EMAIL: user.EMAIL,
+      FIRST_NAME: user.FIRST_NAME,
+      LAST_NAME: user.LAST_NAME,
+      ROLE: user.ROLE,
+      CREATED_AT: user.CREATED_AT,
+      UPDATED_AT: user.UPDATED_AT,
+    }));
+  }
+
   async getUser(id: number, currentUserId: number): Promise<UserViewModel> {
     if (id !== currentUserId) {
       throw new Error('You are not authorized to view this user');
@@ -21,6 +35,7 @@ class UserService {
       EMAIL: user.EMAIL,
       FIRST_NAME: user.FIRST_NAME,
       LAST_NAME: user.LAST_NAME,
+      ROLE: user.ROLE,
       CREATED_AT: user.CREATED_AT,
       UPDATED_AT: user.UPDATED_AT,
     };

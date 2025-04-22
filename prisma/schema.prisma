@@ -20,6 +20,7 @@ model User {
   LAST_NAME  String
   EMAIL      String   @unique
   PASSWORD   String
+  ROLE       String   @default("USER")
   CREATED_AT DateTime @default(now())
   UPDATED_AT DateTime @updatedAt
 

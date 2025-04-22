@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/jwt.utils';
 import { isTokenBlacklisted } from '../utils/token.utils';
+import { USER_ROLES, UserRole } from '../constants/roles';
 
 declare global {
   namespace Express {
@@ -8,6 +9,7 @@ declare global {
       user?: {
         userId: string;
         email: string;
+        role: string;
       };
       token?: string;
     }
@@ -52,6 +54,7 @@ export const authenticate = async (
     req.user = {
       userId: decoded.userId,
       email: decoded.email,
+      role: decoded.role,
     };
     req.token = token;
 
@@ -68,3 +71,41 @@ export const authenticate = async (
     );
   }
 };
+
+/**
+ * Role-based authorization middleware
+ * Allows access only to users with specified roles
+ */
+export const authorize = (allowedRoles: UserRole[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) {
+        return res.error('User not authenticated', undefined, 401);
+      }
+
+      const { role } = req.user;
+
+      if (!allowedRoles.includes(role as UserRole)) {
+        return res.error('Unauthorized - Insufficient permissions', undefined, 403);
+      }
+
+      next();
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.error(error.message, undefined, 403);
+      }
+
+      return res.error(
+        'Internal server error during authorization',
+        undefined,
+        500
+      );
+    }
+  };
+};
+
+/**
+ * Admin-only middleware
+ * Shorthand for authorize([USER_ROLES.ADMIN])
+ */
+export const adminOnly = authorize([USER_ROLES.ADMIN]);

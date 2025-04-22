@@ -1,10 +1,19 @@
 import { Router, Request, Response } from 'express';
 import UserService from '../services/user.service';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate, adminOnly } from '../middleware/auth.middleware';
 
 const userRouter = Router();
 
 userRouter.use(authenticate);
+
+userRouter.get('/', adminOnly, async (req: Request, res: Response) => {
+  try {
+    const users = await UserService.getAllUsers();
+    res.success('Users fetched successfully', users, 200);
+  } catch (error: any) {
+    res.error('Failed to fetch users', error.message, 500);
+  }
+});
 
 userRouter.get('/:id', async (req: Request, res: Response) => {
   try {

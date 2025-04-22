@@ -4,6 +4,7 @@ import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/env';
 export interface TokenPayload {
   userId: string;
   email: string;
+  role: string;
 }
 
 export interface TokenResponse {

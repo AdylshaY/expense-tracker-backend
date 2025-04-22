@@ -19,6 +19,7 @@ export interface UserCredentials {
 export interface UserRegistration extends UserCredentials {
   firstName: string;
   lastName: string;
+  role?: string;
 }
 
 export interface UserData {
@@ -27,6 +28,7 @@ export interface UserData {
   FIRST_NAME: string;
   LAST_NAME: string;
   PASSWORD: string;
+  ROLE: string;
   CREATED_AT: Date;
   UPDATED_AT: Date;
 }

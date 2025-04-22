@@ -8,6 +8,7 @@ import {
 import bcrypt from 'bcryptjs';
 import { generateTokens } from '../utils/jwt.utils';
 import { blacklistToken } from '../utils/token.utils';
+import { USER_ROLES, isValidRole, UserRole } from '../constants/roles';
 
 class AuthService {
   async signUp(userData: UserRegistration): Promise<AuthResponse> {
@@ -23,18 +24,26 @@ class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(userData.password, salt);
 
+      // Set default role to USER if not provided or invalid
+      let role: UserRole = USER_ROLES.USER;
+      if (userData.role && isValidRole(userData.role)) {
+        role = userData.role;
+      }
+
       const user = await prisma.user.create({
         data: {
           EMAIL: userData.email,
           PASSWORD: hashedPassword,
           FIRST_NAME: userData.firstName,
           LAST_NAME: userData.lastName,
+          ROLE: role,
         },
       });
 
       const tokens = generateTokens({
         userId: String(user.ID),
         email: user.EMAIL,
+        role: user.ROLE,
       });
 
       const responseData: UserWithToken = {
@@ -43,6 +52,7 @@ class AuthService {
           email: user.EMAIL,
           firstName: user.FIRST_NAME,
           lastName: user.LAST_NAME,
+          role: user.ROLE,
         },
         token: tokens.accessToken,
       };
@@ -84,6 +94,7 @@ class AuthService {
       const tokens = generateTokens({
         userId: String(user.ID),
         email: user.EMAIL,
+        role: user.ROLE,
       });
 
       const responseData: UserWithToken = {
@@ -92,6 +103,7 @@ class AuthService {
           email: user.EMAIL,
           firstName: user.FIRST_NAME,
           lastName: user.LAST_NAME,
+          role: user.ROLE,
         },
         token: tokens.accessToken,
       };
