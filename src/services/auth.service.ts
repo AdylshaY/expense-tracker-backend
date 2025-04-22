@@ -6,9 +6,9 @@ import {
   UserWithToken,
 } from '../types/auth.types';
 import bcrypt from 'bcryptjs';
-import { generateTokens } from '../utils/jwt.utils';
+import { generateTokens, timeToMs } from '../utils/jwt.utils';
 import { removeUserToken } from '../utils/token.utils';
-import { USER_ROLES, isValidRole, UserRole } from '../constants/roles';
+import { USER_ROLES } from '../constants/roles';
 
 class AuthService {
   async signUp(userData: UserRegistration): Promise<AuthResponse> {
@@ -103,7 +103,7 @@ class AuthService {
           data: {
             TOKEN: tokenValue,
             USER_ID: user.ID,
-            EXPIRES_AT: new Date(Date.now() + expiresIn),
+            EXPIRES_AT: new Date(Date.now() + timeToMs(expiresIn)),
           },
         });
       }

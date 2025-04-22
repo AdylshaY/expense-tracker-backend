@@ -38,3 +38,24 @@ export const verifyAccessToken = (token: string): TokenPayload => {
     throw new Error('Invalid token');
   }
 };
+
+/**
+ * Convert a time string like '15m', '1h', '7d' to milliseconds
+ */
+export const timeToMs = (timeStr: string): number => {
+  const unit = timeStr.charAt(timeStr.length - 1);
+  const value = parseInt(timeStr.slice(0, -1));
+
+  switch (unit) {
+    case 's':
+      return value * 1000; // seconds
+    case 'm':
+      return value * 60 * 1000; // minutes
+    case 'h':
+      return value * 60 * 60 * 1000; // hours
+    case 'd':
+      return value * 24 * 60 * 60 * 1000; // days
+    default:
+      return 15 * 60 * 1000; // default to 15 minutes if format is incorrect
+  }
+};
