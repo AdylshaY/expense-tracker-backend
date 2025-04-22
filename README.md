@@ -21,12 +21,14 @@ A RESTful API for managing personal expenses and income, built with Node.js, Exp
 - **Security:** Helmet, Express Rate Limiter
 - **Documentation:** Swagger/OpenAPI 3.1.0
 - **Language:** TypeScript
+- **Containerization:** Docker
 
 ## Prerequisites
 
 - Node.js (v18 or higher recommended)
 - SQL Server database
 - NPM
+- Docker (optional, for containerized deployment)
 
 ## Installation
 
@@ -62,6 +64,45 @@ npm run dev
 ```
 npm run build
 npm run start:prod
+```
+
+## Docker Support
+
+### Prerequisites
+- Docker
+- Docker Compose
+
+### Docker Configuration
+The application includes a Docker setup for easy deployment:
+- `Dockerfile` for containerizing the application
+- `docker-compose.yml` for orchestrating the application and database
+
+### Running with Docker
+
+Simply use Docker Compose to start both the application and database:
+```
+docker-compose up
+```
+
+This will automatically build the image (if needed) and start both the application and the SQL Server database in containers.
+
+### Run in detached mode
+```
+docker-compose up -d
+```
+
+### Environment Variables for Docker
+When using Docker, you can configure the environment variables in the `docker-compose.yml` file or use environment files.
+
+### Accessing the Containerized Application
+The application will be available at:
+```
+http://localhost:3000
+```
+
+### Stopping Docker Containers
+```
+docker-compose down
 ```
 
 ## API Documentation
@@ -139,5 +180,7 @@ expense-tracker-api/
 ├── .env.example      # Example environment variables
 ├── .env.development.local # Development environment variables
 ├── .env.production.local  # Production environment variables
+├── Dockerfile        # Docker configuration for containerization
+├── docker-compose.yml # Docker Compose configuration
 └── package.json      # Project dependencies
 ```
